@@ -1,52 +1,60 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const {ModuleFederationPlugin} = require("webpack").container;
+const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
+const { FederatedTypesPlugin } = require('@module-federation/typescript');
 
 const htmlPlugin = new HtmlWebPackPlugin({
   template: "./public/index.html",
-  filename: "./index.html"
+  filename: "./index.html",
 });
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin =
+  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const moduleFederationConfig = {
+  name: "MicroFrontend1",
+  filename: "MicroFrontend1Module.js",
+  exposes: {
+    "./App": "./src/App",
+  },
+  shared: {
+    react: {
+      singleton: true,
+    },
+    "react-dom": {
+      singleton: true,
+    },
+  },
+}
 module.exports = {
-  mode: 'development',
+  mode: "development",
   devServer: {
     static: path.join(__dirname, "dist"),
     port: 3001,
-    historyApiFallback:{
-      index:'/public/index.html'
+    historyApiFallback: {
+      index: "/public/index.html",
     },
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: "babel-loader"
-      }
-    }
-    ]
+    rules: [
+      {
+        test: /\.tsx$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "ts-loader",
+        },
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".js"],
   },
   plugins: [
     htmlPlugin,
-    new ModuleFederationPlugin({
-      name: "MicroFrontend1",
-      filename: "MicroFrontend1Module.js",
-      exposes: {
-        "./App": "./src/App"
-      },
-      shared: {
-        react: {
-          singleton: true
-        },
-        'react-dom': {
-          singleton: true
-        }
-      }
-    }),
+    new ModuleFederationPlugin(moduleFederationConfig),
+    new FederatedTypesPlugin({ federationConfig: moduleFederationConfig }),
     // new BundleAnalyzerPlugin({
     //   analyzerMode: 'server',
     //   generateStatsFile: true,
     //   statsOptions: { source: false }
     // })
-  ]
+  ],
 };

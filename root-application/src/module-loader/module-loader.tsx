@@ -1,4 +1,4 @@
-import React, { lazy, ReactNode, Suspense, useMemo } from "react";
+import React, { lazy, ReactNode, Suspense, useCallback, useMemo } from "react";
 
 function Error() {
   return <>Error</>;
@@ -10,9 +10,10 @@ function Loading() {
 
 export default function ModuleLoader({
   importFn,
-  ...props
+  properties,
 }: {
   importFn: () => any;
+  properties: { [property: string]: any };
 }): ReactNode {
   const ComponentModule = useMemo(
     () =>
@@ -27,9 +28,10 @@ export default function ModuleLoader({
       }),
     [importFn]
   );
+
   return (
     <Suspense fallback={<Loading />}>
-      <ComponentModule {...props}></ComponentModule>
+      <ComponentModule {...properties}></ComponentModule>
     </Suspense>
   );
 }

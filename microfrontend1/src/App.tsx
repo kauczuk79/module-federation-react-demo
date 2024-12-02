@@ -1,10 +1,10 @@
 import React from "react";
 import Button from "./Button";
 
-export default function App() {
+export default function App({ user }: { user?: any }) {
   return (
     <div>
-      <h3>XYZ MicroFrontend app</h3>
+      <h3>Microfrontend here, I know you are {user?.displayName}</h3>
       <div>
         <Button></Button>
       </div>

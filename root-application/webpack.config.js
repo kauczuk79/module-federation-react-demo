@@ -21,8 +21,12 @@ const moduleFederationConfig = {
     },
     'react-dom': {
       singleton: true
+    },
+    'firebase': {
+      singleton: true
     }
-  }
+  },
+
 };
 module.exports = {
   mode: 'development',

@@ -1,11 +1,15 @@
 import React from "react";
-import LoadModule from "./module-loader/module-loader";
+import { UserProvider, useUser } from "./firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
+import app from "./firebase/app";
+import Test from "./components/test";
+getFirestore(app);
 
 export default function App() {
   return (
-    <div>
-      <h1>Root app</h1>
-      <LoadModule importFn={() => import("MicroFrontend1/App")}></LoadModule>
-    </div>
+    <UserProvider>
+      <Test></Test>
+    </UserProvider>
   );
 }

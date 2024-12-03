@@ -38,15 +38,13 @@ module.exports = {
     },
   },
   module: {
-    exprContextCritical: false,
-    rules: [{
-      test: /\.tsx$/,
-      exclude: /node_modules/,
-      use: {
-        loader: "ts-loader"
-      }
-    }
-    ]
+    rules: [
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: "babel-loader",
+      },
+    ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

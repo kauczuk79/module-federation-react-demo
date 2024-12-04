@@ -1,5 +1,5 @@
 import React from "react";
-import { UserProvider, useUser } from "./firebase/auth";
+import { UserProvider } from "./firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 import app from "./firebase/app";

@@ -3,10 +3,6 @@ const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
 const { FederatedTypesPlugin } = require('@module-federation/typescript');
 
-const htmlPlugin = new HtmlWebPackPlugin({
-  template: "./public/index.html",
-  filename: "./index.html",
-});
 const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const moduleFederationConfig = {
@@ -46,7 +42,9 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js"],
   },
   plugins: [
-    htmlPlugin,
+    new HtmlWebPackPlugin({
+      template: "./public/index.html"
+    }),
     new ModuleFederationPlugin(moduleFederationConfig),
     new FederatedTypesPlugin({ federationConfig: moduleFederationConfig }),
     // new BundleAnalyzerPlugin({

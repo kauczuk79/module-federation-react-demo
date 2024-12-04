@@ -4,10 +4,6 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const {ModuleFederationPlugin} = require("webpack").container;
 const path = require("path");
 
-const htmlPlugin = new HtmlWebPackPlugin({
-  template: "./public/index.html",
-  filename: "./index.html"
-});
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const moduleFederationConfig = {
   name: "RootApplication",
@@ -30,6 +26,10 @@ const moduleFederationConfig = {
 };
 module.exports = {
   mode: 'development',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
   devServer: {
     static: path.join(__dirname, "dist"),
     port: 3000,
@@ -50,7 +50,9 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   plugins: [
-    htmlPlugin,
+    new HtmlWebPackPlugin({
+      template: "./public/index.html"
+    }),
     new ModuleFederationPlugin(moduleFederationConfig),
     new FederatedTypesPlugin({ federationConfig: moduleFederationConfig, typeFetchOptions: {
       maxRetryAttempts: 1

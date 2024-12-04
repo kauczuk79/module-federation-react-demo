@@ -192,6 +192,151 @@ In the project you need to be able to change Webpack configuration, because usin
 
     Run `npm start` and visit `http://localhost:3000`
 
+## Adding micro-frontend functionality to the project
+
+### Exporting micro-frontend
+
+1. Create configuration of the Module Federation plugin
+
+   It is built in Webpack 5 functionality and can be used as plugin in `webpack.config.js`
+
+   ```js
+   const { ModuleFederationPlugin } = require("webpack").container;
+
+   const moduleFederationConfig = {
+     name: "MicroFrontend1",
+     filename: "MicroFrontend1Moudle.js",
+     exposes: {
+       "./Something": "./src/any/path/to/something",
+     },
+   };
+   ```
+
+   `exposes` object provides what is exported and available outside the module. Property is a ID of the exported thing (used in parent project), value is a path to the file, which should be exposed under this ID.
+
+1. Instantiate plugin and add to the list of the plugins
+
+   ```js
+   module.exports = {
+     // ...
+     plugins: [
+       // ...
+       new ModuleFederationPlugin(moduleFederationConfig),
+     ],
+   };
+   ```
+
+1. If project is using TypeScript - export types too
+
+   Install TypeScript plugin
+
+   ```bash
+   npm install --save-dev @module-federation/typescript axios
+   ```
+
+   Add the plugin with the same configuration as it is for `ModuleFederationPlugin`. If project is using external module, you can specify how many times plugin will try to download foreign types from used modules. `axios` is used to download the types during the build.
+
+   ```js
+   module.exports = {
+     // ...
+     plugins: [
+       // ...
+       new FederatedTypesPlugin({
+         federationConfig: moduleFederationConfig,
+         typeFetchOptions: {
+           maxRetryAttempts: 1,
+         },
+       }),
+     ],
+   };
+   ```
+
+1. If project wants to reuse shared libraries (like `react` or `react-dom`) you can specify this in the `moduleFederationConfig`.
+
+   ```js
+   const moduleFederationConfig = {
+     // ...
+     shared: {
+       react: {
+         singleton: true,
+       },
+       "react-dom": {
+         singleton: true,
+       },
+     },
+   };
+   ```
+
+   Every library can be configured like it is described [here](https://webpack.js.org/plugins/module-federation-plugin#sharing-libraries)
+
+1. Rebuild the project using `npm run build`. Types are exported to `./dist/@mf-types/`
+
+### Importing micro-frontend
+
+1. Install dependencies in parent project
+
+   ```bash
+   npm install --save-dev @module-federation/typescript axios
+   ```
+
+1. Configure `ModuleFederationPlugin` and types support
+
+   ```js
+   const { ModuleFederationPlugin } = require("webpack").container;
+   const { FederatedTypesPlugin } = require("@module-federation/typescript");
+
+   const moduleFederationConfig = {
+     name: "ParentApplication",
+     filename: "ParentApplicationModule.js",
+     shared: {
+       react: {
+         singleton: true,
+       },
+       "react-dom": {
+         singleton: true,
+       },
+     },
+   };
+
+   module.exports = {
+     // ...
+     plugins: [
+       // ...
+       new ModuleFederationPlugin(moduleFederationConfig),
+       new FederatedTypesPlugin({
+         federationConfig: moduleFederationConfig,
+         typeFetchOptions: {
+           maxRetryAttempts: 1,
+         },
+       }),
+     ],
+   };
+   ```
+
+1. Configure remote modules in the parent project configuration
+
+   ```js
+   const moduleFederationConfig = {
+     // ...
+     remotes: {
+       MicroFrontend1:
+         "MicroFrontend1@http://localhost:3000/ParentApplicationModule.js",
+     },
+   };
+   ```
+
+1. Simple, synchronous usage of import
+
+   ```tsx
+   // any React component
+   import Something from "MicroFrontend1/Something"; // "Something" is exposed in MicroFrontend1
+
+   const { something1, something2 /* ... */ } =
+     require("MicroFrontend1/Something") as typeof Something;
+   ```
+
+   Exposed may be component or any other thing from react like Hook, Provider
+
 # Useful links
 
 - [Shared Redux store](https://dev.to/ibrahimshamma99/a-simplified-prospective-in-sharing-redux-store-between-federated-react-apps-1kgm)

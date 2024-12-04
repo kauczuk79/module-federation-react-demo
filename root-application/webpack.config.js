@@ -9,7 +9,8 @@ const moduleFederationConfig = {
   name: "RootApplication",
   filename: "RootApplicationModule.js",
   remotes: {
-    MicroFrontend1: "MicroFrontend1@http://localhost:3001/MicroFrontend1Module.js"
+    MicroFrontend1: "MicroFrontend1@http://localhost:3001/MicroFrontend1Module.js",
+    AuthMicrofrontend: "AuthMicrofrontend@http://localhost:3002/AuthMicrofrontendModule.js"
   },
   shared: {
     react: {

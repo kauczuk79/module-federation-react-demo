@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
-import { useUser } from "../firebase/auth";
-import LoadModule from "../module-loader/module-loader";
+import ComponentLoader from "../module-loader/module-loader";
+import Auth from "AuthMicrofrontend/Auth";
+const { useUser } = require("AuthMicrofrontend/Auth") as typeof Auth;
 
 export default function Test(): ReactNode {
   const { user, login, signOut } = useUser();
@@ -26,10 +27,10 @@ export default function Test(): ReactNode {
         </button>
       )}
       {user && (
-        <LoadModule
+        <ComponentLoader
           importFn={() => import("MicroFrontend1/App")}
           properties={{ user }}
-        ></LoadModule>
+        ></ComponentLoader>
       )}
     </>
   );

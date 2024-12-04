@@ -8,7 +8,7 @@ function Loading() {
   return <span>Loading</span>;
 }
 
-export default function ModuleLoader({
+export default function ComponentLoader({
   importFn,
   properties,
 }: {

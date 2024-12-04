@@ -1,10 +1,8 @@
 import React from "react";
-import { UserProvider } from "./firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-import app from "./firebase/app";
+import Auth from "AuthMicrofrontend/Auth";
 import Test from "./components/test";
-getFirestore(app);
+
+const { UserProvider } = require("AuthMicrofrontend/Auth") as typeof Auth;
 
 export default function App() {
   return (
